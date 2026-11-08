@@ -1,14 +1,11 @@
-import type { IconName } from "@/components/ui/Icon";
+import type { SaleCategory } from "@/lib/content/schema";
 
-export type SaleCategory = { slug: string; title: string; subtitle: string; icon: IconName };
-
-/**
- * Catégories de la section « Vente ».
- * Les pages de détail (/vente/autos, …) sont à créer quand le contenu sera prêt.
- */
-export const saleCategories: SaleCategory[] = [
-  { slug: "autos", title: "Autos", subtitle: "Voitures d'occasion", icon: "car" },
-  { slug: "motos", title: "Motos", subtitle: "Motos d'occasion", icon: "motorbike" },
-  { slug: "pieces", title: "Pièces", subtitle: "Performance & oldtimers", icon: "gear" },
-  { slug: "divers", title: "Divers", subtitle: "Accessoires & équipement", icon: "toolbox" },
+/** Catégories de la section « Vente » (les annonces sont gérées depuis l'admin). */
+export const saleCategories: { slug: SaleCategory; title: string }[] = [
+  { slug: "autos", title: "Autos" },
+  { slug: "motos", title: "Motos" },
+  { slug: "pieces", title: "Pièces" },
+  { slug: "divers", title: "Divers" },
 ];
+
+export const saleCategoryTitle = (slug: SaleCategory) => saleCategories.find((c) => c.slug === slug)?.title ?? slug;
