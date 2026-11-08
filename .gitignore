@@ -47,3 +47,6 @@ next-env.d.ts
 /AGENTS.md
 /CLAUDE.md
 /.claude/
+
+# gestionnaire de paquets : npm uniquement (package-lock.json)
+/yarn.lock
