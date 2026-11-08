@@ -1,5 +1,6 @@
 import "server-only";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 import { createSessionToken, SESSION_COOKIE, verifySessionToken } from "./session-token";
 
 /** Durée de la session : 30 jours. */
@@ -25,6 +26,8 @@ export async function isAdmin(): Promise<boolean> {
   const secret = sessionSecret();
   if (!secret) return false;
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  // L'heure courante n'a de sens qu'à la requête (jamais pendant le pré-rendu)
+  await connection();
   return verifySessionToken(token, secret, Date.now());
 }
 
