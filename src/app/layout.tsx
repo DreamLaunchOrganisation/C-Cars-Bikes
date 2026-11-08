@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { site } from "@/data/site";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { anton, inter, jetbrainsMono } from "./fonts";
 import "./globals.css";
 
@@ -41,12 +39,8 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="fr-BE" className={`${anton.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
-      <body>
-        <Header />
-        <main>{children}</main>
-        <Footer />
-      </body>
+    <html lang="fr-BE" data-scroll-behavior="smooth" className={`${anton.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }
