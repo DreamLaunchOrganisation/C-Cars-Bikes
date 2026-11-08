@@ -1,0 +1,152 @@
+.form {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.s2 {
+  grid-column: span 2;
+}
+.s3 {
+  grid-column: span 3;
+}
+.s4 {
+  grid-column: span 4;
+}
+.s6 {
+  grid-column: span 6;
+}
+
+.field label,
+.label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.field label em,
+.foot em {
+  color: var(--red);
+  font-style: normal;
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 13px 14px;
+  color: var(--text);
+  font-size: 0.95rem;
+  transition: 0.2s;
+}
+
+.field textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 3px rgba(253, 242, 28, 0.15);
+}
+
+.field [aria-invalid="true"] {
+  border-color: var(--red);
+}
+
+.error {
+  color: #ff6b72;
+  font-size: 0.8rem;
+}
+
+/* Zone de dépôt de fichier */
+.file {
+  position: relative;
+  border: 1.5px dashed var(--line);
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.file:hover,
+.file:focus-within {
+  border-color: var(--yellow);
+  color: var(--text);
+}
+.file input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.file b {
+  color: var(--yellow);
+}
+
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.statusSlot {
+  grid-column: span 6;
+}
+.statusSlot:empty {
+  display: none;
+}
+
+.status {
+  padding: 16px;
+  border-radius: 10px;
+  background: rgba(253, 242, 28, 0.08);
+  border: 1px solid rgba(253, 242, 28, 0.35);
+  color: var(--yellow);
+  font-weight: 500;
+}
+
+.statusError {
+  background: rgba(206, 0, 12, 0.1);
+  border-color: rgba(206, 0, 12, 0.5);
+  color: #ff6b72;
+}
+
+.foot {
+  grid-column: span 6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.foot small {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 720px) {
+  .s2,
+  .s3,
+  .s4 {
+    grid-column: span 6;
+  }
+  .half {
+    grid-column: span 3;
+  }
+}

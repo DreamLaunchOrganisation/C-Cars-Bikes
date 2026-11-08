@@ -1,0 +1,8 @@
+.footer {
+  padding: 28px 0;
+  text-align: center;
+}
+
+.footer small {
+  color: var(--muted);
+}

@@ -1,0 +1,59 @@
+.frame {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.slide img {
+  object-fit: cover;
+  transform: scale(1.06);
+  transition: transform 6s ease-out;
+}
+
+.active {
+  opacity: 1;
+}
+
+/* Léger zoom arrière pendant que la photo est affichée */
+.active img {
+  transform: scale(1);
+}
+
+.dots {
+  position: absolute;
+  right: 18px;
+  bottom: 20px;
+  display: flex;
+  gap: 8px;
+}
+
+.dots button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+
+.dots button:hover {
+  background: #fff;
+}
+
+.dots .dotActive {
+  background: var(--yellow);
+  transform: scale(1.25);
+}

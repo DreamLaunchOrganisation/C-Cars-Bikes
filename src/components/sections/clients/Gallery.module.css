@@ -1,0 +1,269 @@
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 56px;
+  flex-wrap: wrap;
+}
+
+.heading h2 {
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  margin-top: 14px;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tabActive {
+  background: var(--yellow);
+  color: #111;
+  border-color: var(--yellow);
+}
+
+/* ---------- Carrousel ---------- */
+
+.track {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  cursor: grab;
+}
+.track::-webkit-scrollbar {
+  display: none;
+}
+
+.dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+.dragging .card {
+  pointer-events: none;
+}
+
+.item {
+  flex: 0 0 calc((100% - 32px) / 2.35);
+  scroll-snap-align: start;
+  animation: fade-in 0.5s both;
+}
+
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: #1b1b1b;
+  cursor: zoom-in;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent 45%);
+  pointer-events: none;
+}
+
+.img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s;
+}
+
+.card:hover .img {
+  transform: scale(1.05);
+}
+
+.caption {
+  position: absolute;
+  left: 16px;
+  bottom: 14px;
+  z-index: 1;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.caption::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--yellow);
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* ---------- Points + flèches ---------- */
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.dots {
+  display: flex;
+  gap: 6px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  border: 0;
+  background: var(--line);
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.dotActive {
+  width: 22px;
+  background: var(--yellow);
+}
+
+.hint {
+  display: none;
+}
+
+.arrows {
+  display: flex;
+  gap: 10px;
+}
+
+.arrows button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.arrows button:hover:not(:disabled) {
+  background: var(--yellow);
+  color: #111;
+  border-color: var(--yellow);
+}
+
+.arrows button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ---------- Plein écran ---------- */
+
+.lightbox {
+  margin: auto;
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: transparent;
+  padding: 24px;
+  cursor: zoom-out;
+}
+
+.lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.lightbox figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.zoomImg {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 82vh;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.lightbox figcaption {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 980px) {
+  .heading h2 {
+    font-size: clamp(2.2rem, 7vw, 3.4rem);
+  }
+}
+
+@media (max-width: 720px) {
+  .head {
+    margin-bottom: 36px;
+  }
+  .track {
+    gap: 12px;
+    margin: 0 -16px;
+    padding: 0 16px 4px;
+    scroll-padding: 0 16px;
+  }
+  .item {
+    flex: 0 0 86%;
+    scroll-snap-align: center;
+  }
+  .card {
+    aspect-ratio: 4 / 3;
+  }
+  .arrows {
+    display: none;
+  }
+  .hint {
+    display: inline;
+  }
+}

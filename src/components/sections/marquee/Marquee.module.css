@@ -1,0 +1,57 @@
+.marquee {
+  background: var(--yellow);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* La piste contient la liste deux fois : on la décale de la moitié pour boucler. */
+.track {
+  display: inline-flex;
+  align-items: center;
+  padding: 14px 0;
+  animation: scroll 90s linear infinite;
+}
+
+.marquee:hover .track {
+  animation-play-state: paused;
+}
+
+/* Chaque logo est suivi d'une pastille rouge (marge identique des deux côtés pour un bouclage sans saut) */
+.item {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.item::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  margin: 0 36px;
+  background: var(--red);
+  border-radius: 50%;
+}
+
+.logo {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 42px;
+  max-width: 150px;
+}
+
+@keyframes scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 720px) {
+  .logo {
+    max-height: 34px;
+    max-width: 120px;
+  }
+  .item::after {
+    margin: 0 24px;
+  }
+}

@@ -1,0 +1,107 @@
+/*
+ * En-tête sur deux lignes : le titre « C/CARS & BIKES » centré, puis les onglets.
+ * Sa hauteur totale correspond à --header-h (globals.css).
+ */
+
+.header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  transition: background 0.3s, border-color 0.3s;
+  border-bottom: 1px solid transparent;
+}
+
+.scrolled {
+  background: rgba(20, 20, 20, 0.88);
+  backdrop-filter: blur(12px);
+  border-bottom-color: var(--line);
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 72px;
+  padding-top: 14px;
+}
+
+.brand {
+  display: block;
+  line-height: 0;
+}
+
+.title {
+  width: auto;
+  height: 50px;
+  /* ombre portée, comme sur la bannière d'origine */
+  filter: drop-shadow(2px 3px 2px rgba(0, 0, 0, 0.7));
+}
+
+.nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--header-h) - 72px);
+}
+
+.menu {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.menu a {
+  color: var(--muted);
+  transition: color 0.2s;
+}
+
+.menu a:hover {
+  color: var(--yellow);
+}
+
+.burger {
+  display: none;
+  background: none;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .brandRow {
+    justify-content: space-between;
+    height: var(--header-h);
+    padding-top: 0;
+  }
+  .title {
+    height: 30px;
+  }
+  .nav {
+    position: static;
+    height: 0;
+  }
+  .menu {
+    display: none;
+    position: absolute;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .menu.open {
+    display: flex;
+  }
+  .menu a {
+    display: block;
+    padding: 16px;
+  }
+  .burger {
+    display: block;
+  }
+}
