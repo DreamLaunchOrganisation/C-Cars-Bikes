@@ -1,9 +1,13 @@
 import Image from "next/image";
-import { partners } from "@/data/partners";
+import { getContent } from "@/lib/content";
+import { imageProps } from "@/lib/content/image-props";
 import { Checker } from "@/components/ui/Checker";
 import styles from "./Marquee.module.css";
 
-export function Marquee() {
+export async function Marquee() {
+  const { partners } = await getContent();
+  if (partners.length === 0) return null;
+
   // Liste doublée pour un défilement continu sans saut
   const items = [...partners, ...partners];
   return (
@@ -14,8 +18,8 @@ export function Marquee() {
         <div className={styles.marquee}>
           <div className={styles.track}>
             {items.map((partner, i) => (
-              <span key={i} className={styles.item}>
-                <Image src={partner.logo} alt="" className={styles.logo} sizes="160px" />
+              <span key={`${partner.id}-${i}`} className={styles.item}>
+                <Image {...imageProps(partner.logo)} placeholder="empty" alt="" className={styles.logo} sizes="160px" />
               </span>
             ))}
           </div>

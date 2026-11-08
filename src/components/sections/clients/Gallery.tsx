@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
-import type { GalleryCategory, GalleryItem } from "@/data/gallery";
+import { imageProps } from "@/lib/content/image-props";
+import { CLIENT_CATEGORIES, type ClientCategory, type ClientPhoto } from "@/lib/content/schema";
 import styles from "./Gallery.module.css";
 
 type Props = {
-  categories: Record<GalleryCategory, GalleryItem[]>;
+  photos: ClientPhoto[];
   heading: ReactNode;
 };
 
@@ -16,18 +17,19 @@ const GAP = 16;
  * Galerie « Nos clients » : onglets Motos / Autos, carrousel horizontal
  * (glisser au doigt ou à la souris, flèches, points) et affichage plein écran.
  */
-export function Gallery({ categories, heading }: Props) {
-  const names = Object.keys(categories) as GalleryCategory[];
-  const [active, setActive] = useState<GalleryCategory>(names[0]);
+export function Gallery({ photos, heading }: Props) {
+  // Onglets : seulement les catégories qui ont au moins une photo
+  const names = CLIENT_CATEGORIES.filter((category) => photos.some((p) => p.category === category));
+  const [active, setActive] = useState<ClientCategory>(names[0]);
   const [index, setIndex] = useState(0);
   const [bounds, setBounds] = useState({ atStart: true, atEnd: true });
-  const [zoomed, setZoomed] = useState<GalleryItem | null>(null);
+  const [zoomed, setZoomed] = useState<ClientPhoto | null>(null);
 
   const trackRef = useRef<HTMLUListElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const drag = useRef({ active: false, moved: false, x: 0, left: 0 });
 
-  const items = categories[active];
+  const items = photos.filter((p) => p.category === active);
 
   const stepWidth = () => {
     const first = trackRef.current?.firstElementChild as HTMLElement | null;
@@ -94,7 +96,7 @@ export function Gallery({ categories, heading }: Props) {
     }
   };
 
-  const openItem = (item: GalleryItem) => {
+  const openItem = (item: ClientPhoto) => {
     if (drag.current.moved) {
       drag.current.moved = false;
       return;
@@ -137,12 +139,11 @@ export function Gallery({ categories, heading }: Props) {
         aria-label={`Photos ${active}`}
       >
         {items.map((item, i) => (
-          <li key={item.title} className={styles.item} style={{ animationDelay: `${i * 0.08}s` }}>
+          <li key={item.id} className={styles.item} style={{ animationDelay: `${i * 0.08}s` }}>
             <button type="button" className={styles.card} onClick={() => openItem(item)}>
               <Image
-                src={item.image}
+                {...imageProps(item.image)}
                 alt={item.title}
-                placeholder="blur"
                 sizes="(max-width: 720px) 86vw, 45vw"
                 className={styles.img}
               />
@@ -156,7 +157,7 @@ export function Gallery({ categories, heading }: Props) {
         <div className={styles.dots} style={{ visibility: scrollable ? "visible" : "hidden" }}>
           {items.map((item, i) => (
             <button
-              key={item.title}
+              key={item.id}
               type="button"
               aria-label={`Photo ${i + 1}`}
               aria-current={i === index}
@@ -185,7 +186,7 @@ export function Gallery({ categories, heading }: Props) {
       >
         {zoomed && (
           <figure>
-            <Image src={zoomed.image} alt={zoomed.title} sizes="100vw" className={styles.zoomImg} />
+            <Image {...imageProps(zoomed.image)} alt={zoomed.title} sizes="100vw" className={styles.zoomImg} />
             <figcaption>{zoomed.title}</figcaption>
           </figure>
         )}

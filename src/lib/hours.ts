@@ -1,4 +1,5 @@
-import { openingHours, timeZone, type Slot } from "@/data/site";
+import { timeZone } from "@/data/site";
+import type { DayHours, Slot } from "@/lib/content/schema";
 
 /** "510" → "8h30", "780" → "13h" */
 export function formatMinutes(min: number): string {
@@ -29,9 +30,9 @@ export function localTime(date: Date): { day: number; minutes: number } {
   };
 }
 
-export function isOpenAt(date: Date): boolean {
+export function isOpenAt(date: Date, hours: DayHours[]): boolean {
   const { day, minutes } = localTime(date);
-  const today = openingHours.find((d) => d.day === day);
+  const today = hours.find((d) => d.day === day);
   return !!today?.slots.some((s) => minutes >= s.from && minutes < s.to);
 }
 

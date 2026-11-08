@@ -1,6 +1,6 @@
 "use server";
 
-import { site } from "@/data/site";
+import { getContent } from "@/lib/content";
 import { sendMail } from "@/lib/mailer";
 import {
   ALLOWED_FILE_TYPES,
@@ -85,8 +85,12 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     attachment ? `\nPièce jointe : ${attachment.filename}` : "",
   ].join("\n");
 
+  // Messages envoyés à l'e-mail modifiable depuis l'admin (CONTACT_TO reste prioritaire)
+  const { contact } = await getContent();
+
   try {
     await sendMail({
+      to: contact.email,
       subject: `Nouveau message du site - ${fullName}`,
       text,
       replyTo: { name: fullName, address: data.email },
@@ -96,7 +100,7 @@ export async function sendContactMessage(_prev: ContactState, formData: FormData
     console.error("[contact] Échec de l'envoi :", error);
     return {
       status: "error",
-      message: `Le message n'a pas pu être envoyé. Réessayez ou appelez-nous au ${site.phone.display}.`,
+      message: `Le message n'a pas pu être envoyé. Réessayez ou appelez-nous au ${contact.phoneDisplay}.`,
       values,
     };
   }

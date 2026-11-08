@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { openingHours } from "@/data/site";
+import { DAY_LABELS, type DayHours } from "@/lib/content/schema";
 import { formatSlots, isOpenAt, localTime } from "@/lib/hours";
 import styles from "./Contact.module.css";
 
@@ -14,12 +14,16 @@ function subscribe(onChange: () => void) {
 const getMinute = () => Math.floor(Date.now() / 60_000);
 const getServerMinute = () => null;
 
-export function OpeningHours() {
+/** Ordre d'affichage : du lundi au dimanche. */
+const WEEK_ORDER = [1, 2, 3, 4, 5, 6, 0];
+
+export function OpeningHours({ hours }: { hours: DayHours[] }) {
   // null côté serveur : le statut « ouvert / fermé » ne s'affiche qu'une fois dans le navigateur
   const minute = useSyncExternalStore(subscribe, getMinute, getServerMinute);
   const now = minute === null ? null : new Date(minute * 60_000);
   const today = now ? localTime(now).day : null;
-  const open = now ? isOpenAt(now) : null;
+  const open = now ? isOpenAt(now, hours) : null;
+  const days = WEEK_ORDER.map((day) => hours.find((d) => d.day === day) ?? { day, slots: [] });
 
   return (
     <div className={styles.box}>
@@ -29,9 +33,9 @@ export function OpeningHours() {
       </p>
       <h3 className={styles.boxTitle}>Horaires</h3>
       <ul className={styles.hours}>
-        {openingHours.map((d) => (
+        {days.map((d) => (
           <li key={d.day} className={d.day === today ? styles.today : ""} aria-current={d.day === today ? "date" : undefined}>
-            <span>{d.label}</span>
+            <span>{DAY_LABELS[d.day]}</span>
             <span>{formatSlots(d.slots)}</span>
           </li>
         ))}

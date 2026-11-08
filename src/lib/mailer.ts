@@ -10,6 +10,8 @@ import nodemailer from "nodemailer";
  */
 
 type Mail = {
+  /** Destinataire ; à défaut CONTACT_TO, puis la boîte d'envoi. */
+  to?: string;
   subject: string;
   text: string;
   replyTo: { name: string; address: string };
@@ -35,9 +37,9 @@ function getTransport() {
   });
 }
 
-export async function sendMail({ subject, text, replyTo, attachments }: Mail) {
+export async function sendMail({ to: recipient, subject, text, replyTo, attachments }: Mail) {
   const from = process.env.SMTP_USER ?? "info@carbike.be";
-  const to = process.env.CONTACT_TO ?? from;
+  const to = process.env.CONTACT_TO || recipient || from;
 
   const info = await getTransport().sendMail({
     // L'expéditeur doit être la boîte authentifiée (exigence One.com)

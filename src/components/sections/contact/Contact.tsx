@@ -1,4 +1,6 @@
 import { site } from "@/data/site";
+import { getContent } from "@/lib/content";
+import { phoneLinks } from "@/lib/content/phone";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -6,8 +8,10 @@ import { ContactForm } from "./ContactForm";
 import { OpeningHours } from "./OpeningHours";
 import styles from "./Contact.module.css";
 
-export function Contact() {
+export async function Contact() {
   const { address } = site;
+  const { contact, openingHours } = await getContent();
+  const phone = phoneLinks(contact.phoneDisplay);
 
   return (
     <section id="contact" aria-labelledby="contact-title">
@@ -32,17 +36,17 @@ export function Contact() {
           </div>
 
           <div className={styles.side}>
-            <OpeningHours />
+            <OpeningHours hours={openingHours} />
 
             <address className={`${styles.box} ${styles.info}`}>
               <h3 className={styles.boxTitle}>Coordonnées</h3>
-              <a href={site.phone.href}>
+              <a href={phone.href}>
                 <Icon name="phone" strokeWidth={2} />
-                {site.phone.display}
+                {contact.phoneDisplay}
               </a>
-              <a href={`mailto:${site.email}`}>
+              <a href={`mailto:${contact.email}`}>
                 <Icon name="mail" strokeWidth={2} />
-                {site.email}
+                {contact.email}
               </a>
               <a href={site.maps.link} target="_blank" rel="noopener noreferrer">
                 <Icon name="pin" strokeWidth={2} />

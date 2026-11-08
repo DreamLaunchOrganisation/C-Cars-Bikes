@@ -1,4 +1,6 @@
-import { openingHours, site } from "@/data/site";
+import { site } from "@/data/site";
+import { getContent } from "@/lib/content";
+import { phoneLinks } from "@/lib/content/phone";
 import { toSchemaTime } from "@/lib/hours";
 
 const SCHEMA_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -7,7 +9,8 @@ const SCHEMA_DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Fr
  * Données structurées schema.org (fiche « garage ») pour Google :
  * adresse, téléphone, horaires… affichables dans les résultats de recherche.
  */
-export function LocalBusinessJsonLd() {
+export async function LocalBusinessJsonLd() {
+  const { contact, openingHours } = await getContent();
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "AutoRepair",
@@ -15,8 +18,8 @@ export function LocalBusinessJsonLd() {
     description: site.description,
     url: site.url,
     image: `${site.url}/icon.png`,
-    telephone: site.phone.international,
-    email: site.email,
+    telephone: phoneLinks(contact.phoneDisplay).international,
+    email: contact.email,
     address: {
       "@type": "PostalAddress",
       streetAddress: site.address.street,
