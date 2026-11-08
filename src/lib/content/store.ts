@@ -1,5 +1,6 @@
 import "server-only";
 import { get, put } from "@vercel/blob";
+import { isBlobUrl } from "@/lib/admin/blob-url";
 import { defaultContent } from "./defaults";
 import { siteContentSchema, type SiteContent } from "./schema";
 
@@ -9,6 +10,13 @@ const CONTENT_PATH = "content.json";
 export class StorageNotConfiguredError extends Error {
   constructor() {
     super("Stockage non configuré (BLOB_READ_WRITE_TOKEN manquant).");
+  }
+}
+
+/** content.json illisible : on refuse de le modifier pour ne pas écraser le contenu. */
+export class ContentCorruptedError extends Error {
+  constructor() {
+    super("Le contenu enregistré est illisible ou invalide : modification annulée pour ne rien écraser. Contactez le développeur.");
   }
 }
 
@@ -35,12 +43,47 @@ export function parseContent(raw: unknown): SiteContent {
   return result.data;
 }
 
-/** Dernière version enregistrée, lue à la source (sans le cache du CDN). */
-export async function readStoredContent(): Promise<SiteContent> {
+/**
+ * Les images du dépôt (contenu par défaut) sont enregistrées avec leur URL de build,
+ * qui peut changer d'un déploiement à l'autre : on les rattache à leur version actuelle.
+ */
+function withCurrentRepoImages(content: SiteContent): SiteContent {
+  const partnerLogos = new Map(defaultContent.partners.map((p) => [p.id, p.logo]));
+  const clientImages = new Map(defaultContent.clients.map((c) => [c.id, c.image]));
+  return {
+    ...content,
+    partners: content.partners.map((p) =>
+      !isBlobUrl(p.logo.src) && partnerLogos.has(p.id) ? { ...p, logo: partnerLogos.get(p.id)! } : p,
+    ),
+    clients: content.clients.map((c) =>
+      !isBlobUrl(c.image.src) && clientImages.has(c.id) ? { ...c, image: clientImages.get(c.id)! } : c,
+    ),
+  };
+}
+
+/**
+ * Dernière version enregistrée, lue à la source (sans le cache du CDN).
+ * En mode strict (avant une écriture), un fichier invalide lève une erreur au lieu de revenir
+ * au contenu par défaut, pour ne jamais écraser le contenu du gérant.
+ */
+export async function readStoredContent({ strict = false } = {}): Promise<SiteContent> {
   if (!isStorageConfigured()) return defaultContent;
   const file = await get(CONTENT_PATH, { access: "public", useCache: false });
   if (!file || file.statusCode !== 200) return defaultContent;
-  return parseContent(await new Response(file.stream).text());
+  const text = await new Response(file.stream).text();
+
+  if (strict) {
+    let data: unknown;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      throw new ContentCorruptedError();
+    }
+    const result = siteContentSchema.safeParse(data);
+    if (!result.success) throw new ContentCorruptedError();
+    return withCurrentRepoImages(result.data);
+  }
+  return withCurrentRepoImages(parseContent(text));
 }
 
 export async function writeStoredContent(content: SiteContent): Promise<void> {

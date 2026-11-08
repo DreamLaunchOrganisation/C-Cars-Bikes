@@ -21,7 +21,7 @@ export async function getContent(): Promise<SiteContent> {
  * puis rafraîchit immédiatement le site. À appeler uniquement depuis une Server Action.
  */
 export async function mutateContent(change: (content: SiteContent) => SiteContent): Promise<SiteContent> {
-  const next = change(await readStoredContent());
+  const next = change(await readStoredContent({ strict: true }));
   await writeStoredContent(next);
   updateTag(CONTENT_TAG);
   return next;

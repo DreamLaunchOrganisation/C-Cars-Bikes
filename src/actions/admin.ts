@@ -7,7 +7,7 @@ import { isBlobUrl } from "@/lib/admin/blob-url";
 import { requireAdmin, UnauthorizedError } from "@/lib/admin/session";
 import { mutateContent } from "@/lib/content";
 import { appendItem, moveItem, removeItem, updateItem } from "@/lib/content/list-ops";
-import { StorageNotConfiguredError } from "@/lib/content/store";
+import { ContentCorruptedError, StorageNotConfiguredError } from "@/lib/content/store";
 import {
   clientPhotoSchema,
   contactSchema,
@@ -44,7 +44,8 @@ async function run(change: () => Promise<void>): Promise<ActionResult> {
     if (
       error instanceof UnauthorizedError ||
       error instanceof InvalidInputError ||
-      error instanceof StorageNotConfiguredError
+      error instanceof StorageNotConfiguredError ||
+      error instanceof ContentCorruptedError
     ) {
       return { ok: false, error: error.message };
     }

@@ -81,3 +81,27 @@ describe("writeStoredContent", () => {
     );
   });
 });
+
+describe("readStoredContent (écriture : lecture stricte)", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.mocked(get).mockReset();
+    vi.restoreAllMocks();
+  });
+
+  it("refuse de repartir d'un content.json invalide (évite d'écraser le contenu par défaut)", async () => {
+    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "test");
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(get).mockResolvedValue({ statusCode: 200, stream: streamOf('{"version":1,"partners":"cassé"}') } as never);
+    await expect(readStoredContent({ strict: true })).rejects.toThrow(/illisible|invalide/);
+  });
+
+  it("rattache les images du dépôt à leur version actuelle", async () => {
+    vi.stubEnv("BLOB_READ_WRITE_TOKEN", "test");
+    const stale = structuredClone(defaultContent);
+    stale.partners[0].logo = { src: "/_next/static/media/ancienne-empreinte.png", width: 1, height: 1 };
+    vi.mocked(get).mockResolvedValue({ statusCode: 200, stream: streamOf(JSON.stringify(stale)) } as never);
+    const content = await readStoredContent();
+    expect(content.partners[0].logo).toEqual(defaultContent.partners[0].logo);
+  });
+});
