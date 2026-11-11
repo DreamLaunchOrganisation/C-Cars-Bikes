@@ -51,6 +51,8 @@ export function HeroSlideshow() {
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
+      // Clic sur la photo → photo suivante (les pastilles gèrent leur propre clic)
+      onClick={() => setCurrent((c) => (c + 1) % slides.length)}
       role="region"
       aria-roledescription="carrousel"
       aria-label="Photos de l'atelier"
@@ -65,7 +67,7 @@ export function HeroSlideshow() {
             src={slide.image}
             alt={slide.alt}
             fill
-            sizes="(max-width: 980px) 100vw, 50vw"
+            sizes="(max-width: 680px) 100vw, (max-width: 980px) 680px, 50vw"
             priority={i === 0}
             placeholder="blur"
           />
@@ -80,7 +82,10 @@ export function HeroSlideshow() {
             className={i === current ? styles.dotActive : undefined}
             aria-label={`Afficher la photo ${i + 1} sur ${slides.length}`}
             aria-current={i === current}
-            onClick={() => setCurrent(i)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setCurrent(i);
+            }}
           />
         ))}
       </div>

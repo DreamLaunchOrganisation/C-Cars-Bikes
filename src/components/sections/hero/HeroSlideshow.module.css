@@ -6,6 +6,19 @@
   background: var(--card);
   border: 1px solid var(--line);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+  cursor: pointer; /* un clic passe à la photo suivante */
+}
+
+/*
+ * Une seule colonne (tablette, téléphone) : le diaporama passe sous le texte.
+ * Largeur plafonnée à 680px et hauteur à ~60 % de l'écran (ratio 3/2 → largeur ≤ 90svh)
+ * pour qu'il ne mange pas tout l'écran.
+ */
+@media (max-width: 980px) {
+  .frame {
+    width: min(100%, 680px, 90svh);
+    margin-inline: auto;
+  }
 }
 
 .slide {

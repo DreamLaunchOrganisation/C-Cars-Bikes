@@ -10,6 +10,13 @@
   margin-inline: auto;
 }
 
+/* Sur téléphone, le logo ne prend plus toute la largeur */
+@media (max-width: 720px) {
+  .wrap {
+    width: min(70%, 280px);
+  }
+}
+
 .glow {
   position: absolute;
   inset: 8%;
