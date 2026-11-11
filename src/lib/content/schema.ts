@@ -22,12 +22,26 @@ export const partnerSchema = z.object({
 });
 
 export const CLIENT_CATEGORIES = ["Motos", "Autos"] as const;
+export const MAX_CLIENT_EXTRAS = 20;
+export const MAX_CLIENT_DESCRIPTION = 1000;
 
 export const clientPhotoSchema = z.object({
   id: z.string().min(1),
   title: z.string().trim().min(1, "Indiquez un titre.").max(80),
   category: z.enum(CLIENT_CATEGORIES),
+  /**
+   * Texte affiché à côté des photos en plein écran (vide = pas de cadre).
+   * Une ligne commençant par « - » devient une puce.
+   */
+  description: z.string().trim().max(MAX_CLIENT_DESCRIPTION, `${MAX_CLIENT_DESCRIPTION} caractères maximum.`).optional(),
+  /** Photo principale (vignette du carrousel). */
   image: imgSchema,
+  /**
+   * Autres photos du même véhicule, visibles en plein écran.
+   * Absent dans les content.json enregistrés avant cette fonctionnalité : le store complète alors
+   * avec les photos du dépôt (voir withCurrentRepoImages).
+   */
+  extras: z.array(imgSchema).max(MAX_CLIENT_EXTRAS, `${MAX_CLIENT_EXTRAS} photos supplémentaires maximum.`).optional(),
 });
 
 export const SALE_CATEGORIES = ["autos", "motos", "pieces", "divers"] as const;

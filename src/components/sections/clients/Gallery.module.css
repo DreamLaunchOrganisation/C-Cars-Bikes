@@ -289,3 +289,249 @@
     display: inline;
   }
 }
+
+/* ---------- Plusieurs photos par véhicule ---------- */
+
+/* Pastille « 5 photos » sur la vignette du carrousel */
+.count {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--yellow);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.lightbox figure {
+  position: relative;
+  max-width: 100%;
+  cursor: default;
+}
+
+.viewer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.zoomNext {
+  cursor: pointer;
+}
+
+.viewerPrev {
+  left: 12px;
+}
+
+.viewerNext {
+  right: 12px;
+}
+
+.lightbox figcaption {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.counter {
+  color: var(--yellow);
+  font-variant-numeric: tabular-nums;
+}
+
+.thumbs {
+  display: flex;
+  gap: 8px;
+  list-style: none;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 2px;
+  scrollbar-width: none;
+}
+
+.thumb {
+  display: block;
+  width: 72px;
+  height: 48px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  overflow: hidden;
+  background: none;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb:hover {
+  opacity: 0.85;
+}
+
+.thumbActive {
+  border-color: var(--yellow);
+  opacity: 1;
+}
+
+.close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(17, 17, 17, 0.75);
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--yellow);
+  color: #111;
+}
+
+/* Avec les miniatures, la photo laisse un peu plus de place en hauteur */
+.lightbox:has(.thumbs) .zoomImg {
+  max-height: 70vh;
+}
+
+@media (max-width: 720px) {
+  /* Les flèches du carrousel sont masquées sur mobile, pas celles de la visionneuse */
+  .viewer .arrow {
+    display: block;
+    width: 40px;
+    height: 40px;
+  }
+  .thumb {
+    width: 56px;
+    height: 38px;
+  }
+}
+
+/* ---------- Description du véhicule (à droite des photos, dessous sur mobile) ---------- */
+
+.media {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.withInfo {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 32px;
+  align-items: center;
+  width: min(1320px, 100%);
+}
+
+.withInfo .zoomImg {
+  max-height: 70vh;
+}
+
+.info {
+  position: relative;
+  padding: 28px 26px 26px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(253, 242, 28, 0.08), transparent 55%),
+    #161616;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+/* Liseré jaune sur la gauche, rappel du logo */
+.info::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 24px;
+  bottom: 24px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--yellow);
+}
+
+.infoLabel {
+  font-family: var(--font-code);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 14px;
+}
+
+.infoText {
+  display: grid;
+  gap: 12px;
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+/* La première ligne (souvent le modèle) sert de titre */
+.infoText > p:first-child {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.infoText ul {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  padding: 14px 0;
+  border-block: 1px solid var(--line);
+}
+
+.infoText li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.infoText li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 8px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--yellow);
+}
+
+@media (max-width: 900px) {
+  /* Photo puis fiche l'une sous l'autre : la boîte défile */
+  .lightbox[open]:has(.withInfo) {
+    align-items: flex-start;
+    overflow-y: auto;
+  }
+  .withInfo {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-top: 48px;
+  }
+  .withInfo .zoomImg {
+    max-height: 55vh;
+  }
+  .info {
+    max-height: none;
+    overflow: visible;
+  }
+}

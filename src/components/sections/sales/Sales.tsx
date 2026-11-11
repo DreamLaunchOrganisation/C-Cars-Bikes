@@ -22,7 +22,7 @@ export async function Sales() {
           {sales.length > 0 ? (
             <SalesBoard items={sales} />
           ) : (
-            <ul className={styles.grid}>
+            <ul className={`${styles.grid} ${styles.categoryGrid}`}>
               {saleCategories.map((category) => (
                 <li key={category.slug}>
                   <a href="#contact" className={styles.categoryCard} title={`${category.title} : nous contacter`}>

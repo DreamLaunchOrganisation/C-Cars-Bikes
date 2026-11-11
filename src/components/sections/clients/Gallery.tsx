@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { imageProps } from "@/lib/content/image-props";
-import { CLIENT_CATEGORIES, type ClientCategory, type ClientPhoto } from "@/lib/content/schema";
+import { CLIENT_CATEGORIES, type ClientCategory, type ClientPhoto, type Img } from "@/lib/content/schema";
 import styles from "./Gallery.module.css";
 
 type Props = {
@@ -14,8 +14,40 @@ type Props = {
 const GAP = 16;
 
 /**
+ * Description saisie dans l'admin → paragraphes et listes à puces
+ * (les lignes qui commencent par « - » ou « • » forment une liste).
+ */
+function Description({ text }: { text: string }) {
+  const blocks: ({ kind: "p"; text: string } | { kind: "ul"; items: string[] })[] = [];
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    const bullet = line.match(/^[-•*]\s*(.+)$/);
+    const last = blocks.at(-1);
+    if (bullet && last?.kind === "ul") last.items.push(bullet[1]);
+    else if (bullet) blocks.push({ kind: "ul", items: [bullet[1]] });
+    else blocks.push({ kind: "p", text: line });
+  }
+  return blocks.map((block, i) =>
+    block.kind === "p" ? (
+      <p key={i}>{block.text}</p>
+    ) : (
+      <ul key={i}>
+        {block.items.map((item, j) => (
+          <li key={j}>{item}</li>
+        ))}
+      </ul>
+    ),
+  );
+}
+
+/** Toutes les photos d'un véhicule : la principale puis les autres. */
+const photosOf = (item: ClientPhoto): Img[] => [item.image, ...(item.extras ?? [])];
+
+/**
  * Galerie « Nos clients » : onglets Motos / Autos, carrousel horizontal
- * (glisser au doigt ou à la souris, flèches, points) et affichage plein écran.
+ * (glisser au doigt ou à la souris, flèches, points) et affichage plein écran
+ * où l'on parcourt toutes les photos du véhicule.
  */
 export function Gallery({ photos, heading }: Props) {
   // Onglets : seulement les catégories qui ont au moins une photo
@@ -24,6 +56,7 @@ export function Gallery({ photos, heading }: Props) {
   const [index, setIndex] = useState(0);
   const [bounds, setBounds] = useState({ atStart: true, atEnd: true });
   const [zoomed, setZoomed] = useState<ClientPhoto | null>(null);
+  const [shot, setShot] = useState(0);
 
   const trackRef = useRef<HTMLUListElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -101,7 +134,19 @@ export function Gallery({ photos, heading }: Props) {
       drag.current.moved = false;
       return;
     }
+    setShot(0);
     setZoomed(item);
+  };
+
+  const shots = zoomed ? photosOf(zoomed) : [];
+  const description = zoomed?.description?.trim();
+  const showShot = (i: number) => setShot((i + shots.length) % shots.length);
+
+  // Flèches du clavier dans la visionneuse
+  const onLightboxKey = (e: React.KeyboardEvent) => {
+    if (shots.length < 2) return;
+    if (e.key === "ArrowRight") showShot(shot + 1);
+    if (e.key === "ArrowLeft") showShot(shot - 1);
   };
 
   const scrollable = !(bounds.atStart && bounds.atEnd);
@@ -158,6 +203,11 @@ export function Gallery({ photos, heading }: Props) {
                   className={styles.img}
                 />
                 <span className={styles.caption}>{item.title}</span>
+                {item.extras && item.extras.length > 0 && (
+                  <span className={styles.count} aria-label={`${item.extras.length + 1} photos`}>
+                    {item.extras.length + 1} photos
+                  </span>
+                )}
               </button>
             </li>
           ))}
@@ -189,17 +239,85 @@ export function Gallery({ photos, heading }: Props) {
         <span className={styles.hint}>Glissez pour voir plus →</span>
       </div>
 
+      {/* Clic sur le fond : fermer. Clic sur la photo : suivante. */}
       <dialog
         ref={dialogRef}
         className={styles.lightbox}
         onClose={() => setZoomed(null)}
         onClick={() => setZoomed(null)}
+        onKeyDown={onLightboxKey}
         aria-label={zoomed?.title}
       >
         {zoomed && (
-          <figure>
-            <Image {...imageProps(zoomed.image)} alt={zoomed.title} sizes="100vw" className={styles.zoomImg} />
-            <figcaption>{zoomed.title}</figcaption>
+          <figure className={description ? styles.withInfo : undefined} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.media}>
+              <div className={styles.viewer}>
+                <Image
+                  key={shots[shot].src}
+                  {...imageProps(shots[shot])}
+                  alt={shots.length > 1 ? `${zoomed.title}, photo ${shot + 1} sur ${shots.length}` : zoomed.title}
+                  sizes="100vw"
+                  className={`${styles.zoomImg} ${shots.length > 1 ? styles.zoomNext : ""}`}
+                  onClick={() => (shots.length > 1 ? showShot(shot + 1) : setZoomed(null))}
+                />
+                {shots.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      className={`${styles.arrow} ${styles.viewerPrev}`}
+                      aria-label="Photo précédente"
+                      onClick={() => showShot(shot - 1)}
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      className={`${styles.arrow} ${styles.viewerNext}`}
+                      aria-label="Photo suivante"
+                      onClick={() => showShot(shot + 1)}
+                    >
+                      →
+                    </button>
+                  </>
+                )}
+              </div>
+              <figcaption>
+                {zoomed.title}
+                {shots.length > 1 && (
+                  <span className={styles.counter}>
+                    {shot + 1} / {shots.length}
+                  </span>
+                )}
+              </figcaption>
+              {shots.length > 1 && (
+                <ul className={styles.thumbs}>
+                  {shots.map((img, i) => (
+                    <li key={img.src}>
+                      <button
+                        type="button"
+                        className={`${styles.thumb} ${i === shot ? styles.thumbActive : ""}`}
+                        aria-label={`Photo ${i + 1}`}
+                        aria-current={i === shot}
+                        onClick={() => showShot(i)}
+                      >
+                        <Image {...imageProps(img)} alt="" sizes="80px" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            {description && (
+              <aside className={styles.info} aria-label={`À propos : ${zoomed.title}`}>
+                <p className={styles.infoLabel}>Le véhicule</p>
+                <div className={styles.infoText}>
+                  <Description text={description} />
+                </div>
+              </aside>
+            )}
+            <button type="button" className={styles.close} aria-label="Fermer" onClick={() => setZoomed(null)}>
+              ✕
+            </button>
           </figure>
         )}
       </dialog>

@@ -385,3 +385,71 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- Nos clients : autres photos d'un véhicule ---------- */
+
+.extras {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+.extrasList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+}
+
+.extra {
+  position: relative;
+}
+
+.extra img,
+.extraAdd {
+  display: block;
+  width: 64px;
+  height: 48px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.extraRemove {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 0;
+  background: #ce000c;
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+
+.extraRemove:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.extraAdd {
+  display: grid;
+  place-items: center;
+  border: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.extraAdd:hover,
+.extraAdd:focus-within {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+
+.extraAddDisabled {
+  opacity: 0.4;
+  pointer-events: none;
+}

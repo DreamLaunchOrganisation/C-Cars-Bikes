@@ -24,7 +24,18 @@ vi.mock("@/lib/content", () => ({
 vi.mock("@vercel/blob", () => ({ del: vi.fn(async () => {}) }));
 
 import { del } from "@vercel/blob";
-import { addPartner, addSaleItem, moveClientPhoto, removePartner, saveContact, updateSaleItem } from "./admin";
+import {
+  addClientExtras,
+  addPartner,
+  addSaleItem,
+  moveClientPhoto,
+  removeClientExtra,
+  removeClientPhoto,
+  removePartner,
+  saveContact,
+  updateClientPhoto,
+  updateSaleItem,
+} from "./admin";
 
 const blobImg = { src: "https://abc.public.blob.vercel-storage.com/uploads/partners/x.png", width: 200, height: 80 };
 
@@ -104,5 +115,48 @@ describe("actions admin", () => {
     const contact = { phoneDisplay: "0471 11 22 33", email: "atelier@carbike.be" };
     expect(await saveContact(contact, defaultContent.openingHours)).toEqual({ ok: true });
     expect(state.content.contact).toEqual(contact);
+  });
+
+  it("enregistre ou efface la description d'un véhicule", async () => {
+    const patch = { title: "Ferrari 348", category: "Autos" as const, description: "  Ferrari 348 TB\n- 30 000 km  " };
+    expect(await updateClientPhoto("client-autos-3", patch)).toEqual({ ok: true });
+    expect(state.content.clients.find((c) => c.id === "client-autos-3")!.description).toBe("Ferrari 348 TB\n- 30 000 km");
+    expect(await updateClientPhoto("client-autos-3", { ...patch, description: "" })).toEqual({ ok: true });
+    expect(state.content.clients.find((c) => c.id === "client-autos-3")!.description).toBe("");
+  });
+
+  describe("photos supplémentaires d'un véhicule", () => {
+    const clientImg = { src: "https://abc.public.blob.vercel-storage.com/uploads/clients/y.jpg", width: 800, height: 600 };
+    const target = () => state.content.clients.find((c) => c.id === "client-autos-2")!;
+    const before = () => defaultContent.clients.find((c) => c.id === "client-autos-2")!.extras ?? [];
+
+    it("ajoute des photos à la suite", async () => {
+      expect(await addClientExtras("client-autos-2", [clientImg])).toEqual({ ok: true });
+      expect(target().extras).toEqual([...before(), clientImg]);
+    });
+
+    it("refuse une photo qui ne vient pas du store Blob", async () => {
+      const result = await addClientExtras("client-autos-2", [{ ...clientImg, src: "https://evil.com/y.jpg" }]);
+      expect(result.ok).toBe(false);
+      expect(target().extras).toEqual(before());
+    });
+
+    it("limite le nombre de photos supplémentaires", async () => {
+      const many = Array.from({ length: 21 }, (_, i) => ({ ...clientImg, src: clientImg.src.replace("y.jpg", `${i}.jpg`) }));
+      expect((await addClientExtras("client-autos-2", many)).ok).toBe(false);
+    });
+
+    it("retire une photo et supprime son fichier", async () => {
+      await addClientExtras("client-autos-2", [clientImg]);
+      expect(await removeClientExtra("client-autos-2", clientImg.src)).toEqual({ ok: true });
+      expect(target().extras).toEqual(before());
+      expect(del).toHaveBeenCalledWith(clientImg.src);
+    });
+
+    it("supprime aussi les photos supplémentaires quand on retire le véhicule", async () => {
+      await addClientExtras("client-autos-2", [clientImg]);
+      await removeClientPhoto("client-autos-2");
+      expect(del).toHaveBeenCalledWith(clientImg.src);
+    });
   });
 });

@@ -108,7 +108,12 @@ export async function movePartner(id: string, direction: Direction): Promise<Act
 
 /* --- Nos clients -------------------------------------------------------- */
 
-export async function addClientPhoto(input: { title: string; category: ClientCategory; image: Img }): Promise<ActionResult> {
+export async function addClientPhoto(input: {
+  title: string;
+  category: ClientCategory;
+  description?: string;
+  image: Img;
+}): Promise<ActionResult> {
   return run(async () => {
     const photo = clientPhotoSchema.parse({ id: randomUUID(), ...input, image: checkImage(input.image) });
     await mutateContent((c) => ({ ...c, clients: appendItem(c.clients, photo) }));
@@ -117,22 +122,51 @@ export async function addClientPhoto(input: { title: string; category: ClientCat
 
 export async function updateClientPhoto(
   id: string,
-  patch: { title: string; category: ClientCategory },
+  patch: { title: string; category: ClientCategory; description: string },
 ): Promise<ActionResult> {
   return run(async () => {
-    const valid = clientPhotoSchema.pick({ title: true, category: true }).parse(patch);
+    const valid = clientPhotoSchema.pick({ title: true, category: true, description: true }).required().parse(patch);
     await mutateContent((c) => ({ ...c, clients: updateItem<ClientPhoto>(c.clients, id, valid) }));
   });
 }
 
 export async function removeClientPhoto(id: string): Promise<ActionResult> {
   return run(async () => {
-    let src: string | undefined;
+    let srcs: string[] = [];
     await mutateContent((c) => {
-      src = c.clients.find((p) => p.id === id)?.image.src;
+      const photo = c.clients.find((p) => p.id === id);
+      srcs = photo ? [photo.image.src, ...(photo.extras ?? []).map((img) => img.src)] : [];
       return { ...c, clients: removeItem(c.clients, id) };
     });
-    await deleteImage(src);
+    await Promise.all(srcs.map(deleteImage));
+  });
+}
+
+/** Ajoute des photos supplémentaires (même véhicule) à la suite de celles existantes. */
+export async function addClientExtras(id: string, images: Img[]): Promise<ActionResult> {
+  return run(async () => {
+    if (images.length === 0) throw new InvalidInputError("Choisissez au moins une photo.");
+    const valid = images.map(checkImage);
+    await mutateContent((c) => {
+      const photo = c.clients.find((p) => p.id === id);
+      if (!photo) return c;
+      const extras = clientPhotoSchema.shape.extras.parse([...(photo.extras ?? []), ...valid]);
+      return { ...c, clients: updateItem<ClientPhoto>(c.clients, id, { extras }) };
+    });
+  });
+}
+
+/** Retire une photo supplémentaire d'un véhicule. */
+export async function removeClientExtra(id: string, src: string): Promise<ActionResult> {
+  return run(async () => {
+    let removed: string | undefined;
+    await mutateContent((c) => {
+      const extras = c.clients.find((p) => p.id === id)?.extras;
+      if (!extras?.some((img) => img.src === src)) return c;
+      removed = src;
+      return { ...c, clients: updateItem<ClientPhoto>(c.clients, id, { extras: extras.filter((img) => img.src !== src) }) };
+    });
+    await deleteImage(removed);
   });
 }
 

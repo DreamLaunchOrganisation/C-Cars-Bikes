@@ -14,7 +14,7 @@ describe("siteContentSchema", () => {
 
   it("reprend les données actuelles du site", () => {
     expect(defaultContent.partners).toHaveLength(36);
-    expect(defaultContent.clients).toHaveLength(6);
+    expect(defaultContent.clients).toHaveLength(10);
     expect(defaultContent.sales).toEqual([]);
     expect(defaultContent.contact).toEqual({ phoneDisplay: "0475 54 30 60", email: "info@carbike.be" });
   });

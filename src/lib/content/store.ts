@@ -49,16 +49,33 @@ export function parseContent(raw: unknown): SiteContent {
  */
 function withCurrentRepoImages(content: SiteContent): SiteContent {
   const partnerLogos = new Map(defaultContent.partners.map((p) => [p.id, p.logo]));
-  const clientImages = new Map(defaultContent.clients.map((c) => [c.id, c.image]));
+  const defaultClients = new Map(defaultContent.clients.map((c) => [c.id, c]));
   return {
     ...content,
     partners: content.partners.map((p) =>
       !isBlobUrl(p.logo.src) && partnerLogos.has(p.id) ? { ...p, logo: partnerLogos.get(p.id)! } : p,
     ),
-    clients: content.clients.map((c) =>
-      !isBlobUrl(c.image.src) && clientImages.has(c.id) ? { ...c, image: clientImages.get(c.id)! } : c,
-    ),
+    clients: content.clients.map((stored) => {
+      const repo = defaultClients.get(stored.id);
+      if (!repo) return stored;
+      // Description jamais enregistrée (contenu antérieur) : celle du dépôt. Effacée par l'admin : "" est conservé.
+      const c = { ...stored, description: stored.description ?? repo.description };
+      const image = isBlobUrl(c.image.src) ? c.image : repo.image;
+      // Pas encore de photos supplémentaires enregistrées : on reprend celles du dépôt
+      if (c.extras === undefined) return { ...c, image, extras: repo.extras };
+      const repoExtras = new Map((repo.extras ?? []).map((img) => [repoImageKey(img.src), img]));
+      const extras = c.extras.map((img) => (isBlobUrl(img.src) ? img : (repoExtras.get(repoImageKey(img.src)) ?? img)));
+      return { ...c, image, extras };
+    }),
   };
+}
+
+/**
+ * Nom stable d'une image du dépôt, sans l'empreinte ajoutée au build
+ * (« /_next/static/media/photo-2.a1b2c3.jpg » → « photo-2 »).
+ */
+export function repoImageKey(src: string): string {
+  return (src.split("/").pop() ?? src).split(".")[0];
 }
 
 /**

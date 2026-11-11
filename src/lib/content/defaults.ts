@@ -22,6 +22,8 @@ export const defaultContent: SiteContent = {
       title: item.title,
       category,
       image: toImg(item.image),
+      extras: (item.extras ?? []).map(toImg),
+      ...(item.description ? { description: item.description } : {}),
     })),
   ),
   sales: [],
