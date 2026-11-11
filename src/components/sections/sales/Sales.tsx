@@ -1,4 +1,6 @@
 import { getContent } from "@/lib/content";
+import { saleCategories } from "@/data/sales";
+import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SalesBoard } from "./SalesBoard";
@@ -8,7 +10,7 @@ export async function Sales() {
   const { sales } = await getContent();
 
   return (
-    <section id="vente" className={styles.section} aria-labelledby="sales-title">
+    <section id="vente" aria-labelledby="sales-title">
       <div className="wrap">
         <SectionHeading
           id="sales-title"
@@ -20,12 +22,26 @@ export async function Sales() {
           {sales.length > 0 ? (
             <SalesBoard items={sales} />
           ) : (
-            <div className={styles.empty}>
-              <p>Rien en vente pour le moment — contactez-nous pour toute recherche.</p>
-              <a href="#contact" className="btn btn-primary">
-                Nous contacter →
-              </a>
-            </div>
+            <ul className={styles.grid}>
+              {saleCategories.map((category) => (
+                <li key={category.slug}>
+                  <a href="#contact" className={styles.categoryCard} title={`${category.title} : nous contacter`}>
+                    <span className={styles.categoryVisual}>
+                      <Icon name={category.icon} strokeWidth={2} />
+                    </span>
+                    <span className={styles.categoryBody}>
+                      <span>
+                        <strong>{category.title}</strong>
+                        <small>{category.subtitle}</small>
+                      </span>
+                      <span className={styles.categoryArrow} aria-hidden="true">
+                        →
+                      </span>
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
           )}
         </Reveal>
       </div>

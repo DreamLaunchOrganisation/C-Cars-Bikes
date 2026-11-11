@@ -70,7 +70,7 @@ export function SalesEditor({ items }: { items: SaleItem[] }) {
       <StatusLine status={status} />
 
       {items.length === 0 ? (
-        <p className={styles.muted}>Aucune annonce : le site affiche « Rien en vente pour le moment ».</p>
+        <p className={styles.muted}>Aucune annonce : le site affiche les cases Autos, Motos, Pièces et Divers (lien vers le contact).</p>
       ) : (
         <ul className={styles.list}>
           {items.map((item, i) => (

@@ -26,7 +26,7 @@ export async function Contact() {
               <span className={styles.nowrap}>Un projet&nbsp;?</span>
             </>
           }
-          aside="Décrivez votre véhicule et votre demande, joignez une photo si besoin : on vous recontacte rapidement."
+          aside={"Décrivez votre véhicule et votre demande, joignez une photo si besoin : on vous recontacte rapidement."}
         />
 
         <Reveal className={styles.grid}>

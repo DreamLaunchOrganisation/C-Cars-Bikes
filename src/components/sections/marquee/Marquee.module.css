@@ -12,10 +12,6 @@
   animation: scroll 90s linear infinite;
 }
 
-.marquee:hover .track {
-  animation-play-state: paused;
-}
-
 /* Chaque logo est suivi d'une pastille rouge (marge identique des deux côtés pour un bouclage sans saut) */
 .item {
   display: inline-flex;

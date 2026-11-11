@@ -5,13 +5,31 @@ import { useEffect, useState } from "react";
 import moteurMoto from "@/assets/hero/moteur-moto.jpg";
 import porsche356 from "@/assets/hero/porsche-356.jpg";
 import voituresCourse from "@/assets/hero/voitures-course.jpg";
+import moteurHarleyChrome from "@/assets/hero/moteur-harley-chrome.jpg";
+import harleySportster48 from "@/assets/hero/harley-sportster-48.jpg";
+import alfaGiuliettaSpider from "@/assets/hero/alfa-romeo-giulietta-spider.jpg";
+import ducatiDiavelProfil from "@/assets/hero/ducati-diavel-profil.jpg";
+import roueArriereMoto from "@/assets/hero/roue-arriere-moto.jpg";
+import mercedes300slPhare from "@/assets/hero/mercedes-300sl-phare.jpg";
+import cobraAileAvant from "@/assets/hero/cobra-aile-avant.jpg";
+import ferrariDinoPhare from "@/assets/hero/ferrari-dino-phare.jpg";
+import ducatiDiavelArriere from "@/assets/hero/ducati-diavel-arriere.jpg";
 import styles from "./HeroSlideshow.module.css";
 
-/** Photos du diaporama d'accueil (reprises du site actuel), dans l'ordre. */
+/** Photos du diaporama d'accueil, dans l'ordre (motos et voitures en alternance). */
 const slides = [
   { image: moteurMoto, alt: "Moteur de moto chromé en gros plan" },
   { image: porsche356, alt: "Porsche 356 argent à bandes noires dans un champ" },
+  { image: harleySportster48, alt: "Harley-Davidson Sportster noire préparée, pneus à flancs blancs" },
   { image: voituresCourse, alt: "Deux voitures de course d'avant-guerre" },
+  { image: moteurHarleyChrome, alt: "Moteur V-twin Harley-Davidson chromé" },
+  { image: alfaGiuliettaSpider, alt: "Alfa Romeo Giulietta Spider rouge" },
+  { image: ducatiDiavelProfil, alt: "Ducati Diavel rouge et blanche de profil" },
+  { image: mercedes300slPhare, alt: "Phare d'une Mercedes 300 SL argent, en noir et blanc" },
+  { image: roueArriereMoto, alt: "Roue arrière et échappement d'une moto, en noir et blanc" },
+  { image: ferrariDinoPhare, alt: "Phare avant d'une Ferrari Dino rouge" },
+  { image: ducatiDiavelArriere, alt: "Ducati Diavel rouge et noire vue de trois quarts arrière" },
+  { image: cobraAileAvant, alt: "Aile avant et roue d'une Cobra bleu nuit" },
 ];
 
 const DELAY = 5000;

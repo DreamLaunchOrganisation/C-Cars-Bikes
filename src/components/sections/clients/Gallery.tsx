@@ -126,32 +126,52 @@ export function Gallery({ photos, heading }: Props) {
         </div>
       </div>
 
-      <ul
-        ref={trackRef}
-        key={active}
-        className={styles.track}
-        onScroll={sync}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={endDrag}
-        onPointerLeave={endDrag}
-        onDragStart={(e) => e.preventDefault()}
-        aria-label={`Photos ${active}`}
-      >
-        {items.map((item, i) => (
-          <li key={item.id} className={styles.item} style={{ animationDelay: `${i * 0.08}s` }}>
-            <button type="button" className={styles.card} onClick={() => openItem(item)}>
-              <Image
-                {...imageProps(item.image)}
-                alt={item.title}
-                sizes="(max-width: 720px) 86vw, 45vw"
-                className={styles.img}
-              />
-              <span className={styles.caption}>{item.title}</span>
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className={styles.stage}>
+        <button
+          type="button"
+          className={`${styles.arrow} ${styles.prev}`}
+          aria-label="Photo précédente"
+          disabled={bounds.atStart}
+          onClick={() => scrollBy(-1)}
+        >
+          ←
+        </button>
+        <ul
+          ref={trackRef}
+          key={active}
+          className={styles.track}
+          onScroll={sync}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={endDrag}
+          onPointerLeave={endDrag}
+          onDragStart={(e) => e.preventDefault()}
+          aria-label={`Photos ${active}`}
+        >
+          {items.map((item, i) => (
+            <li key={item.id} className={styles.item} style={{ animationDelay: `${i * 0.08}s` }}>
+              <button type="button" className={styles.card} onClick={() => openItem(item)}>
+                <Image
+                  {...imageProps(item.image)}
+                  alt={item.title}
+                  sizes="(max-width: 720px) 86vw, 45vw"
+                  className={styles.img}
+                />
+                <span className={styles.caption}>{item.title}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button
+          type="button"
+          className={`${styles.arrow} ${styles.next}`}
+          aria-label="Photo suivante"
+          disabled={bounds.atEnd}
+          onClick={() => scrollBy(1)}
+        >
+          →
+        </button>
+      </div>
 
       <div className={styles.controls}>
         <div className={styles.dots} style={{ visibility: scrollable ? "visible" : "hidden" }}>
@@ -167,14 +187,6 @@ export function Gallery({ photos, heading }: Props) {
           ))}
         </div>
         <span className={styles.hint}>Glissez pour voir plus →</span>
-        <div className={styles.arrows}>
-          <button type="button" aria-label="Photo précédente" disabled={bounds.atStart} onClick={() => scrollBy(-1)}>
-            ←
-          </button>
-          <button type="button" aria-label="Photo suivante" disabled={bounds.atEnd} onClick={() => scrollBy(1)}>
-            →
-          </button>
-        </div>
       </div>
 
       <dialog

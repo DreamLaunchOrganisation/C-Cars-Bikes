@@ -23,41 +23,87 @@ const icons = {
       </>
     ),
   },
+  /*
+   * Illustrations des catégories « Vente ». Les pièces posées devant d'autres sont
+   * remplies avec --icon-bg (la couleur du fond derrière l'icône) pour masquer les traits cachés.
+   */
   car: {
-    viewBox: "0 0 100 50",
+    viewBox: "0 0 200 90",
     body: (
       <>
-        <path d="M8 36h84l-4-12-16-4-12-10H34L22 20 10 24z" />
-        <circle cx="26" cy="38" r="7" fill="var(--icon-bg, transparent)" />
-        <circle cx="74" cy="38" r="7" fill="var(--icon-bg, transparent)" />
+        <path d="M16 64 13 54Q13 46 22 44L58 38Q74 24 96 22L112 22Q124 23 134 36L172 42Q186 45 188 54L188 60Q188 64 184 64L170 64A18 18 0 0 0 134 64L66 64A18 18 0 0 0 30 64Z" />
+        <path d="M70 37Q80 28 96 27L112 27Q121 28 128 36ZM104 27 102 37" />
+        <path d="M80 40V60M131 38V60M86 44h8" />
+        <ellipse cx="180" cy="48" rx="4" ry="3" />
+        <path d="M15 48h4M178 60h12M10 58h10" />
+        <circle cx="48" cy="64" r="14" />
+        <circle cx="48" cy="64" r="9" />
+        <circle cx="48" cy="64" r="2.5" />
+        <circle cx="152" cy="64" r="14" />
+        <circle cx="152" cy="64" r="9" />
+        <circle cx="152" cy="64" r="2.5" />
       </>
     ),
   },
   motorbike: {
-    viewBox: "0 0 100 60",
+    viewBox: "0 0 200 110",
     body: (
       <>
-        <circle cx="20" cy="42" r="14" />
-        <circle cx="80" cy="42" r="14" />
-        <path d="M20 42 40 22h22l18 20M40 22l8 20h12M62 22l6-10h8" />
+        <circle cx="46" cy="80" r="22" />
+        <circle cx="46" cy="80" r="16" />
+        <circle cx="46" cy="80" r="4" />
+        <circle cx="158" cy="80" r="22" />
+        <circle cx="158" cy="80" r="16" />
+        <circle cx="158" cy="80" r="4" />
+        <path d="M140 70Q150 56 174 62" />
+        <path d="M46 80 94 78M60 52 72 76" />
+        <path d="M140 34 157 80M145 33 160 72" />
+        <path d="M141 32 134 24 122 22" />
+        <circle cx="151" cy="40" r="7" fill="var(--icon-bg)" />
+        <path d="M138 44 124 74" />
+        <path d="M38 52Q44 44 60 45L100 44L102 50L64 54Q48 54 38 52Z" fill="var(--icon-bg)" />
+        <path d="M100 46Q104 33 124 33Q137 33 141 40L136 50L104 52Z" fill="var(--icon-bg)" />
+        <path d="M103 53 129 53 125 67 101 67ZM104 58H127M103 62H126" fill="var(--icon-bg)" />
+        <path d="M96 67 128 67 126 80Q118 88 104 86L94 80Z" fill="var(--icon-bg)" />
+        <circle cx="110" cy="76" r="5" />
+        <path d="M126 60Q138 66 132 82Q128 89 112 89L82 89" />
+        <path d="M82 86 40 82Q34 83 34 87Q34 91 40 92L82 92Z" fill="var(--icon-bg)" />
+        <path d="M86 82h10" />
       </>
     ),
   },
-  gear: {
-    viewBox: "0 0 60 60",
+  engine: {
+    viewBox: "0 0 200 150",
     body: (
       <>
-        <circle cx="30" cy="30" r="12" />
-        <path d="M30 6v8M30 46v8M6 30h8M46 30h8M13 13l6 6M41 41l6 6M13 47l6-6M41 19l6-6" />
+        {[-24, 24].map((angle) => (
+          <g key={angle} transform={`rotate(${angle} 100 104)`}>
+            <rect x="91" y="42" width="18" height="60" fill="var(--icon-bg)" />
+            <path d="M84 48H116M84 55H116M84 62H116M84 69H116M84 76H116M84 83H116" />
+            <rect x="83" y="27" width="34" height="16" rx="3" fill="var(--icon-bg)" />
+            <rect x="86" y="15" width="28" height="12" rx="6" fill="var(--icon-bg)" />
+          </g>
+        ))}
+        <path
+          d="M60 104Q64 88 100 88Q136 88 140 104L141 116Q138 136 112 138L88 138Q62 136 59 116Z"
+          fill="var(--icon-bg)"
+        />
+        <circle cx="100" cy="115" r="14" />
+        <circle cx="100" cy="115" r="5" />
+        <path d="M68 102h4M128 102h4M70 126h3M127 126h3" />
+        <circle cx="100" cy="68" r="15" fill="var(--icon-bg)" />
+        <circle cx="100" cy="68" r="5" />
       </>
     ),
   },
-  toolbox: {
-    viewBox: "0 0 60 60",
+  helmet: {
+    viewBox: "0 0 130 110",
     body: (
       <>
-        <rect x="10" y="18" width="40" height="30" rx="3" />
-        <path d="M22 18v-6h16v6M10 30h40" />
+        <path d="M20 70C18 30 50 12 80 18C104 24 114 50 110 74L106 88Q104 94 96 94L64 94Q56 94 52 88L46 80L26 82Q20 80 20 70Z" />
+        <path d="M62 46Q90 40 110 50L110 70Q88 70 70 68Q60 66 62 46Z" />
+        <circle cx="54" cy="58" r="5" />
+        <path d="M24 58Q46 28 96 30M84 80h12M84 86h12" />
       </>
     ),
   },

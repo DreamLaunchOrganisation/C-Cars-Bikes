@@ -15,7 +15,7 @@ export function Reviews() {
             ★★★★★
           </p>
           <h2 id="reviews-title" className={`display ${styles.title}`}>
-            Ils nous ont confié leur machine
+            Ils nous ont confié leur véhicule
           </h2>
           <p className={styles.text}>
             Découvrez les avis de nos clients et partagez votre expérience à votre tour.

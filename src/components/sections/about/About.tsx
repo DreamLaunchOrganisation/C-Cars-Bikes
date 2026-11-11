@@ -28,7 +28,7 @@ export function About() {
             chaque machine est traitée comme si c&apos;était la nôtre.
           </p>
           <p>
-            {site.owner} assure un service technique complet et axé sur les performances : entretien,
+            {site.owner} assure un service technique complet et axé sur les performances&nbsp;: entretien,
             restauration, customisation, préparation et fabrication de pièces spéciales, le tout en autonomie
             complète.
           </p>

@@ -26,7 +26,6 @@
   height: auto;
   overflow: visible;
   filter: drop-shadow(0 25px 45px rgba(0, 0, 0, 0.55));
-  animation: float 4.5s ease-in-out 4.8s infinite;
 }
 
 /* Les transformations se font autour du centre de chaque pièce */
@@ -122,8 +121,3 @@
   }
 }
 
-@keyframes float {
-  50% {
-    transform: translateY(-10px);
-  }
-}

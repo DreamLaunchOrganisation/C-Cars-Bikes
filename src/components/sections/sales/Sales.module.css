@@ -1,20 +1,73 @@
-.section {
-  padding-top: 80px;
+/* ---------- Aucune annonce : cases des catégories (lien vers le contact) ---------- */
+
+.categoryCard {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: 0.3s;
 }
 
-/* ---------- Aucune annonce ---------- */
+.categoryCard:hover,
+.categoryCard:focus-visible {
+  transform: translateY(-6px);
+  border-color: var(--yellow);
+}
 
-.empty {
+.categoryVisual {
+  aspect-ratio: 4 / 3;
+  /* Fond uni : les dessins s'en servent (--icon-bg) pour masquer les traits cachés */
+  --icon-bg: #222;
+  background: var(--icon-bg);
+  display: grid;
+  place-items: center;
+  color: #555;
+  transition: 0.3s;
+}
+
+.categoryVisual svg {
+  width: 72%;
+  height: auto;
+  max-height: 72%;
+}
+
+.categoryCard:hover .categoryVisual {
+  color: var(--yellow);
+}
+
+.categoryBody {
+  padding: 20px 22px 24px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-  padding: 28px 32px;
-  border: 1px dashed var(--line);
-  border-radius: var(--radius);
-  background: var(--card);
+  align-items: center;
+}
+
+.categoryBody strong {
+  display: block;
+  font-size: 1.15rem;
+}
+
+.categoryBody small {
+  display: block;
   color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.categoryArrow {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  transition: 0.3s;
+}
+
+.categoryCard:hover .categoryArrow {
+  background: var(--yellow);
+  color: #111;
+  border-color: var(--yellow);
 }
 
 /* ---------- Filtres ---------- */
@@ -189,7 +242,16 @@
     grid-template-columns: 1fr;
     gap: 14px;
   }
-  .empty {
-    padding: 22px;
+  .categoryBody {
+    padding: 14px;
+  }
+  .categoryBody strong {
+    font-size: 1rem;
+  }
+  .categoryBody small {
+    font-size: 0.75rem;
+  }
+  .categoryArrow {
+    display: none;
   }
 }
